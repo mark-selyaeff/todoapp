@@ -27,7 +27,7 @@ class TasklistSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    lists = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    lists = serializers.SlugRelatedField(many=True, slug_field='name', read_only=True)
 
     class Meta:
         model = User

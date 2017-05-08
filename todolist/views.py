@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.http import Http404
+from django.shortcuts import render, get_object_or_404
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -7,7 +8,6 @@ from .models import Task, Tasklist, TaskType
 from todolist.permissions import IsOwner, IsNotAuthenticated
 from rest_framework import permissions
 from .serializers import UserSerializer
-
 
 
 # Create your views here.
@@ -35,7 +35,7 @@ class TaskTypeCreateView(generics.ListCreateAPIView):
 
 class TaskCreateView(generics.ListCreateAPIView):
     serializer_class = TaskSerializer
-    permission_classes = (IsOwner,)
+    # permission_classes = (IsOwner,)
 
 
     def get_queryset(self):
@@ -56,14 +56,31 @@ class TaskCreateView(generics.ListCreateAPIView):
 
 class TaskDetailsView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TaskSerializer
-    permission_classes = (IsOwner,)
+    # permission_classes = (IsOwner,)
 
     def get_queryset(self):
-        queryset = Task.objects.all()
         list_id = self.kwargs.get('list_id', None)
-        if list_id is not None:
-            queryset = queryset.filter(tasklist_id = list_id)
-        return queryset
+        task_id = self.kwargs.get('pk', None)
+        return Task.objects.filter(tasklist_id=list_id, tasklist__owner=self.request.user, pk=task_id)
+
+        # todolist = get_object_or_404(Tasklist, pk=list_id, owner=self.request.user)
+        # try:
+        #     task_id = self.kwargs.get('pk', None)
+        #     task = todolist.tasks.filter(pk=task_id)
+        # except:
+        #     raise Http404
+
+
+
+        # queryset = Task.objects.all()
+        # list_id = self.kwargs.get('list_id', None)
+        # # task_id = self.kwargs.get('id', None)
+        # if list_id is not None:
+        #     queryset = queryset.filter(tasklist_id = list_id)
+        #     tasklist = Tasklist.objects.get(pk=list_id)
+        #     if tasklist.owner != self.request.user:
+        #         raise Http404
+        # return task
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
