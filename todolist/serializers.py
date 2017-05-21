@@ -23,7 +23,7 @@ class TasklistSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tasklist
-        fields = ('name', 'tasks', 'owner')
+        fields = ('name', 'tasks', 'owner', 'id')
 
 
 class UserSerializer(serializers.ModelSerializer):
