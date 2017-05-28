@@ -4,7 +4,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from .views import *
 from rest_framework.authtoken.views import obtain_auth_token
 
-urlpatterns = {
+urlpatterns = [
     url(r'^todolists/$', TasklistCreateView.as_view(), name="lists"), # список списков задач
     url(r'^todolists/(?P<pk>[0-9]+)/$', TasklistDetailsView.as_view(), name="list-detail"), # переход к конкретному списку задач
     url(r'^todolists/(?P<list_id>[0-9]+)/tasks/$', TaskCreateView.as_view(), name="tasks"), # задачи у данного тудулиста
@@ -17,7 +17,8 @@ urlpatterns = {
     url(r'^account_activation_sent/$', account_activation_sent, name='account_activation_sent'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         activate, name='activate'),
-}
+    url(r'^all/$', All.as_view()),
+]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
 

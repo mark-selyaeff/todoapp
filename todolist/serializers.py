@@ -11,6 +11,13 @@ class TaskTypeSerializer(serializers.HyperlinkedModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     tags = serializers.SlugRelatedField(many=True, slug_field='name', queryset=TaskType.objects.all())
 
+    # def create(self, validated_data):
+    #     tags = validated_data.get('tags', [])
+    #     print('debug')
+    #     for tag_name in tags:
+    #         tag, created = TaskType.objects.get_or_create(name=tag_name)
+    #     return Task.objects.create(**validated_data)
+
     class Meta:
         model = Task
         fields = '__all__'  # ('id', 'name', 'description', 'tags', 'completed', 'date_created', 'date_modified', 'due_date', 'priority')
@@ -19,6 +26,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
 class TasklistSerializer(serializers.ModelSerializer):
     tasks = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # tasks = serializers.SlugRelatedField(many=True, slug_field='name', read_only=True) # для отображения названий тасков
     owner = serializers.ReadOnlyField(source='owner.username')
 
     class Meta:

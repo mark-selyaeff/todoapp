@@ -47,6 +47,11 @@ class TaskTypeCreateView(generics.ListCreateAPIView):
     queryset = TaskType.objects.all()
     serializer_class = TaskTypeSerializer
 
+class All(generics.ListAPIView):
+    serializer_class = TaskSerializer
+    def get_queryset(self):
+        return Task.objects.filter(tasklist__owner=self.request.user)
+
 class TaskCreateView(generics.ListCreateAPIView):
     serializer_class = TaskSerializer
     # permission_classes = (IsOwner,)
@@ -59,7 +64,15 @@ class TaskCreateView(generics.ListCreateAPIView):
             queryset = queryset.filter(tasklist_id=list_id)
         return queryset
 
+    def create(self, request, *args, **kwargs):
+        print('debugcreate')
+        tag_names = request.data.get('tags', [])
+        for tag_name in tag_names:
+            TaskType.objects.get_or_create(name=tag_name)
+        return super().create(request, *args, **kwargs)
+
     def perform_create(self, serializer):
+        print('debugperformcreate')
         list_id = self.kwargs.get('list_id', None)
         try:
             tasklist = Tasklist.objects.get(pk=list_id)
