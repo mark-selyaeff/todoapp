@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^account_activation_sent/$', account_activation_sent, name='account_activation_sent'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         activate, name='activate'),
-    url(r'^all/$', All.as_view()),
+    url(r'^shared/$', SharedTask.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

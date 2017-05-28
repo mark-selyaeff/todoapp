@@ -121,6 +121,13 @@ class TaskDetailsView(generics.RetrieveUpdateDestroyAPIView):
         serializer.save()
         return Response(serializer.data)
 
+class SharedTask(generics.ListAPIView):
+    serializer_class = TaskSerializer
+
+    def get_queryset(self):
+        return Task.objects.filter(shared_with=self.request.user)
+
+
 class UserList(generics.ListCreateAPIView):
     permission_classes = (IsNotAuthenticated, )
     queryset = User.objects.all()

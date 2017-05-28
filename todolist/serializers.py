@@ -2,15 +2,15 @@ from rest_framework import serializers
 from .models import Task, Tasklist, TaskType
 from django.contrib.auth.models import User
 
-class TaskTypeSerializer(serializers.HyperlinkedModelSerializer):
+class TaskTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskType
-        fields = ('name',)
+        fields = ('id', 'name', 'tasks')
 
 
 class TaskSerializer(serializers.ModelSerializer):
     tags = serializers.SlugRelatedField(many=True, slug_field='name', queryset=TaskType.objects.all())
-
+    tasklist_owner = serializers.ReadOnlyField(source='tasklist.owner.username') # ПО МОЕМУ ЭТО КОСТЫЛЬ
     # def create(self, validated_data):
     #     tags = validated_data.get('tags', [])
     #     print('debug')
@@ -20,7 +20,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = '__all__'  # ('id', 'name', 'description', 'tags', 'completed', 'date_created', 'date_modified', 'due_date', 'priority')
+        fields =  ('id', 'tasklist_owner', 'name', 'tasklist', 'description', 'tags', 'completed', 'date_created', 'date_modified', 'due_date', 'priority')
         read_only_fields = ('date_created', 'date_modified', 'tasklist')
 
 
@@ -39,7 +39,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'lists', 'password')
+        fields = ('id', 'username', 'lists', 'password', 'shared_tasks_to_me')
         write_only_fields = ('password', )
         read_only_fields = ('id', )
 

@@ -34,6 +34,7 @@ class Task(models.Model):
     date_modified = models.DateField(auto_now=True)
     tasklist = models.ForeignKey(Tasklist, null=True, related_name='tasks', on_delete=models.CASCADE)
     tags = models.ManyToManyField(TaskType, related_name='tasks')
+    shared_with = models.ManyToManyField('auth.User', default='', related_name='shared_tasks_to_me')
 
     PRIORITY = (
         ('h', 'High'),
@@ -56,3 +57,4 @@ def update_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
     instance.profile.save()
+
